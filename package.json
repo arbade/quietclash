@@ -1,0 +1,33 @@
+{
+  "name": "agent-sentinel",
+  "version": "0.1.0",
+  "description": "Detects silent behavioral merge conflicts between parallel AI coding agents — the ones that merge cleanly and pass tests but break at runtime.",
+  "type": "module",
+  "bin": {
+    "sentinel": "bin/sentinel.js"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1",
+    "bench": "node bench/eval.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai-agents",
+    "claude-code",
+    "merge-conflict",
+    "semantic-conflict",
+    "code-review",
+    "parallel-agents",
+    "git-worktree"
+  ],
+  "license": "MIT",
+  "author": "arbade",
+  "dependencies": {
+    "@typescript-eslint/typescript-estree": "^8.0.0"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.40.0"
+  }
+}
