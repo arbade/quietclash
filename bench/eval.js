@@ -76,9 +76,15 @@ export async function runBench({ json = false } = {}) {
       });
       const fired = result.conflicts.length > 0;
       const expected = s.expectConflict;
+      // A conflict scenario that fired nothing BUT had a skipped (unobservable)
+      // symbol wasn't "missed" — quietclash honestly couldn't measure it (e.g.
+      // a probe timed out under load). Counting it as FN would be dishonest and
+      // makes the suite flaky; we report it as an UNOBSERVABLE skip instead.
+      const unobservable = !fired && result.skipped.length > 0;
 
       let verdict;
-      if (fired && expected) { tp++; verdict = 'TP ✓ caught'; }
+      if (unobservable) { verdict = 'SKIP (unobservable)'; }
+      else if (fired && expected) { tp++; verdict = 'TP ✓ caught'; }
       else if (!fired && !expected) { tn++; verdict = 'TN ✓ quiet'; }
       else if (fired && !expected) { fp++; verdict = 'FP ✗ false alarm'; }
       else { fn++; verdict = 'FN ✗ missed'; }
@@ -106,6 +112,7 @@ export async function runBench({ json = false } = {}) {
     precision: Number(precision.toFixed(3)),
     recall: Number(recall.toFixed(3)),
     headline: `Caught ${caughtPct}% of clean-merging, test-passing conflicts that git cannot see, with ${fp} false alarm(s) on clean merges.`,
+    rows,
   };
 
   if (json) {

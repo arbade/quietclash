@@ -24,6 +24,22 @@
   ],
   "license": "MIT",
   "author": "arbade",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arbade/quietclash.git"
+  },
+  "homepage": "https://github.com/arbade/quietclash#readme",
+  "bugs": {
+    "url": "https://github.com/arbade/quietclash/issues"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "bench/",
+    "examples/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@typescript-eslint/typescript-estree": "^8.0.0"
   },

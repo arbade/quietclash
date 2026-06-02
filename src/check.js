@@ -64,13 +64,101 @@ async function judgeSymbol({ overlap, base, branchRefs, worlds, cwd }) {
   };
 }
 
-export async function runCheck({ base, branches, cwd, json, __silent = false }) {
-  // Validate refs up front for a clean error.
-  await resolveRef(base, cwd);
-  for (const b of branches) await resolveRef(b, cwd);
+// Behaviorally PROVE a contract conflict. A contract overlap means: producer
+// branch changed symbol S's behavior, while consumer branch (independently)
+// added/changed a function C that calls S. C was written against S's OLD
+// contract. We test this directly: run C in the consumer-alone world (where S
+// is still old — C's intended behavior) and in the merged world (where S is now
+// new). If C behaves differently, the merge silently broke C's intent — a
+// proven conflict, not just a hint.
+//
+// Needs the consumer's source to derive arity; we read it from the consumer
+// world. consumerWorld is 'a' or 'b' depending on which branch added C.
+async function judgeContract({ contract, worlds, branchRefs }) {
+  const { file, consumerSymbol, consumer, changedSymbol, producer } = contract;
+  const [bA] = branchRefs;
+  const consumerWorld = consumer === bA ? worlds.a : worlds.b;
 
-  // v0 judges pairwise. With >2 branches we compare the first two and note it.
+  // Derive arity by probing with a few arities? Simpler: read consumer source.
+  const { readFileSync } = await import('node:fs');
+  const { resolve } = await import('node:path');
+  let consumerSrc = '';
+  try {
+    consumerSrc = readFileSync(resolve(consumerWorld.path, file), 'utf8');
+  } catch {
+    return { unobservable: 'read-error' }; // can't read -> couldn't measure
+  }
+  // Pull just the consumer symbol's definition to read its arity.
+  const defMatch = consumerSrc.match(
+    new RegExp(`(?:function\\s+${consumerSymbol}\\s*\\(([^)]*)\\)|\\b${consumerSymbol}\\s*=\\s*\\(([^)]*)\\)\\s*=>)`)
+  );
+  const params = (defMatch?.[1] ?? defMatch?.[2] ?? '').trim();
+  const arity = params ? params.split(',').filter((p) => p.trim()).length : 0;
+  const inputs = synthInputs(arity);
+
+  // Consumer must be deterministic to judge it. Distinguish a genuine
+  // non-deterministic verdict (a real "can't claim") from a probe that simply
+  // couldn't run (timeout/load-error under load) — the latter is UNOBSERVABLE,
+  // not "no conflict". Conflating them would silently drop real conflicts.
+  const stability = await isStable(consumerWorld.path, file, consumerSymbol, inputs);
+  if (stability.stable === false) {
+    if (stability.reason === 'non-deterministic') return null; // genuine no-claim
+    return { unobservable: stability.reason }; // timeout/load-error -> couldn't measure
+  }
+
+  const [intended, actual] = await Promise.all([
+    probeSymbol(consumerWorld.path, file, consumerSymbol, inputs),
+    probeSymbol(worlds.merged.path, file, consumerSymbol, inputs),
+  ]);
+  if (!intended.ok || !actual.ok) {
+    return { unobservable: intended.reason || actual.reason || 'probe-failed' };
+  }
+
+  // Find inputs where the consumer's behavior changed between its own world and
+  // the merged world — that divergence IS the silently-broken contract.
+  const evidence = [];
+  for (let i = 0; i < inputs.length; i++) {
+    if (intended.results[i] !== actual.results[i]) {
+      evidence.push({ input: inputs[i], detail: { intended: intended.results[i], merged: actual.results[i] } });
+      if (evidence.length >= 5) break;
+    }
+  }
+  if (evidence.length === 0) return null; // contract held -> no conflict
+
+  return {
+    file,
+    symbol: consumerSymbol,
+    kind: 'contract',
+    dominantKind: 'broken-contract',
+    changedSymbol,
+    producer,
+    consumer,
+    conflictingInputs: evidence.length,
+    totalInputs: inputs.length,
+    evidence: evidence.map((e) => ({
+      input: e.input,
+      detail: { base: '(n/a)', a: e.detail.intended, b: e.detail.intended, m: e.detail.merged },
+    })),
+  };
+}
+
+export async function runCheck({ base, branches, cwd, json, __silent = false }) {
+  // v0 judges pairwise. With >2 branches we compare the first two and SAY SO,
+  // rather than silently ignoring the rest (and we only validate the refs we
+  // actually use, so a stray 3rd branch doesn't abort the run).
   const [bA, bB] = branches;
+  const ignored = branches.slice(2);
+  if (ignored.length && !__silent) {
+    console.error(
+      `quietclash: v0 compares two branches at a time — checking ${bA} vs ${bB}, ignoring: ${ignored.join(', ')}`
+    );
+  }
+
+  // Validate the refs we use, for a clean error.
+  await resolveRef(base, cwd);
+  await resolveRef(bA, cwd);
+  await resolveRef(bB, cwd);
+
   const merge = await mergesCleanly(bA, bA, bB, cwd);
 
   const result = {
@@ -93,7 +181,8 @@ export async function runCheck({ base, branches, cwd, json, __silent = false }) 
   result.overlapCount = direct.length;
   result.contractHints = contract;
 
-  if (direct.length === 0) {
+  // Nothing overlaps at all -> nothing to probe.
+  if (direct.length === 0 && contract.length === 0) {
     output(result, json, __silent);
     return result;
   }
@@ -112,12 +201,33 @@ export async function runCheck({ base, branches, cwd, json, __silent = false }) 
       output(result, json, __silent);
       return result;
     }
+    // Direct overlaps: same symbol changed by 2+ agents.
     for (const overlap of direct) {
       result.probedCount++;
       const judged = await judgeSymbol({ overlap, base, branchRefs: [bA, bB], worlds, cwd });
       if (judged?.conflict) result.conflicts.push(judged.conflict);
       else if (judged?.skip) result.skipped.push(judged.skip);
     }
+    // Contract overlaps: producer changed S, consumer calls S. Behaviorally
+    // prove whether the consumer's intent survived the merge. Proven ones
+    // become real conflicts; unproven ones remain as the weaker hints.
+    const provenConsumers = new Set();
+    for (const c of contract) {
+      result.probedCount++;
+      const judged = await judgeContract({ contract: c, worlds, branchRefs: [bA, bB] });
+      if (judged?.unobservable) {
+        // Couldn't measure (timeout/load-error). Record as skipped so it never
+        // masquerades as "no conflict"; leave the hint in place.
+        result.skipped.push({ file: c.file, symbol: c.consumerSymbol, reason: judged.unobservable });
+      } else if (judged) {
+        result.conflicts.push(judged);
+        provenConsumers.add(`${c.file}::${c.consumerSymbol}`);
+      }
+    }
+    // Demote hints that we managed to prove (avoid double-reporting).
+    result.contractHints = contract.filter(
+      (c) => !provenConsumers.has(`${c.file}::${c.consumerSymbol}`)
+    );
   } finally {
     worlds.base.cleanup?.();
     worlds.a.cleanup?.();

@@ -106,6 +106,12 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(`quietclash: ${err.stack || err.message || err}`);
+  // Show a clean one-line message by default; full stack only when debugging.
+  // A stack trace on a simple typo (bad ref) reads like the tool crashed.
+  if (process.env.QUIETCLASH_DEBUG) {
+    console.error(err.stack || err);
+  } else {
+    console.error(`quietclash: ${err.message || err}`);
+  }
   process.exit(1);
 });

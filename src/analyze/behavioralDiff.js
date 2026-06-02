@@ -65,6 +65,23 @@ export function diffSymbol({ inputs, base, a, b, m }) {
     return { conflict: false, reason: 'unobservable', evidence: [] };
   }
 
+  // Did we ever observe MEANINGFUL behavior? If every probe input produced
+  // NaN / undefined / a thrown error in the merged world, our synthesized
+  // inputs never matched this symbol's real input shape (e.g. it takes a
+  // domain object, or a typed param the pool can't fill). That's NOT evidence
+  // of "no conflict" — it's evidence we couldn't measure. Reporting it as clean
+  // is the dangerous false-negative the README forbids; report unobservable.
+  const meaningful = (s) =>
+    typeof s === 'string' &&
+    !s.includes('NaN') &&
+    s !== 'undefined' &&
+    !s.startsWith('throw:') &&
+    !s.startsWith('reject:');
+  const anyMeaningful = m.results.some(meaningful) || a.results.some(meaningful) || b.results.some(meaningful);
+  if (!anyMeaningful) {
+    return { conflict: false, reason: 'unobservable', evidence: [] };
+  }
+
   const allEvidence = [];
   const kindCounts = {};
   for (let i = 0; i < inputs.length; i++) {

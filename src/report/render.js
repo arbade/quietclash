@@ -10,6 +10,7 @@ const KIND_LABEL = {
   'clash-A-lost': "branches changed it incompatibly; A's intent was lost",
   'clash-B-lost': "branches changed it incompatibly; B's intent was lost",
   'clash-both-broken': 'branches changed it incompatibly; the merge matches neither',
+  'broken-contract': 'one branch changed a function this caller relies on; the caller now behaves differently than intended',
 };
 
 const c = {

@@ -68,21 +68,27 @@ const POOL = [
 
 // Build a list of argument-tuples to call the symbol with. For arity N we take
 // the cartesian-ish product but cap it: each position cycles through the pool,
-// plus a few all-same-index tuples to keep it cheap but varied.
-export function synthInputs(arity, cap = 24) {
+// plus all-same-index tuples to keep it cheap but varied.
+//
+// We vary one position at a time against TWO neutral fills — a numeric 1 and a
+// string — because a single neutral biases the probe: an all-string fill makes
+// multi-arg numeric functions return NaN everywhere (no observable behavior),
+// and vice versa. Trying both neutrals dramatically widens what we can observe.
+export function synthInputs(arity, cap = 40) {
   if (arity === 0) return [[]];
   const tuples = [];
-  // Strategy 1: vary one position at a time, others fixed to a "neutral" value.
-  const neutral = POOL[0];
-  for (let pos = 0; pos < arity; pos++) {
-    for (const v of POOL) {
-      const tuple = new Array(arity).fill(neutral);
-      tuple[pos] = v;
-      tuples.push(tuple);
-      if (tuples.length >= cap) return tuples;
+  const neutrals = [1, '1']; // numeric and string neutral fills
+  for (const neutral of neutrals) {
+    for (let pos = 0; pos < arity; pos++) {
+      for (const v of POOL) {
+        const tuple = new Array(arity).fill(neutral);
+        tuple[pos] = v;
+        tuples.push(tuple);
+        if (tuples.length >= cap) return tuples;
+      }
     }
   }
-  // Strategy 2: a few diagonal tuples (same pool index across positions).
+  // Diagonal tuples (same pool index across positions) catch correlated args.
   for (let i = 0; i < POOL.length && tuples.length < cap; i++) {
     tuples.push(new Array(arity).fill(POOL[i]));
   }

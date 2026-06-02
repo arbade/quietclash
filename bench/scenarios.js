@@ -95,4 +95,26 @@ export const scenarios = [
     b:
       `export function k(x){\n  let v = x;\n  v = v + 1; // A-site\n${PAD('t')}\n  v = v + 5; // B-site\n  return v;\n}\n`,
   },
+
+  // ---- CONTRACT conflict (producer changes a fn; consumer adds a caller) ----
+  {
+    name: 'broken contract (A changes parsePrice to cents, B adds dollar-assuming caller)',
+    expectConflict: true,
+    file: 'm.mjs',
+    // A edits parsePrice (top of file); B appends formatTotal (bottom). The PAD
+    // between them keeps the two edits in separate git hunks -> clean merge.
+    base: `export function parsePrice(s){ return Number(s); }\n${PAD('c')}\n`,
+    a: `export function parsePrice(s){ return Math.round(Number(s) * 100); }\n${PAD('c')}\n`,
+    b: `export function parsePrice(s){ return Number(s); }\n${PAD('c')}\nexport function formatTotal(s){ return '$' + parsePrice(s).toFixed(2); }\n`,
+  },
+  {
+    name: 'compatible contract (A leaves parsePrice behavior intact, B adds caller — must stay quiet)',
+    expectConflict: false,
+    file: 'm.mjs',
+    // A reformats parsePrice (behavior identical); B adds a caller. Contract
+    // holds -> quietclash must NOT fire.
+    base: `export function parsePrice(s){ return Number(s); }\n${PAD('d')}\n`,
+    a: `export function parsePrice(s){\n  return Number(s); // parse numeric price\n}\n${PAD('d')}\n`,
+    b: `export function parsePrice(s){ return Number(s); }\n${PAD('d')}\nexport function formatTotal(s){ return '$' + parsePrice(s).toFixed(2); }\n`,
+  },
 ];

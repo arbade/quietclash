@@ -14,6 +14,10 @@ test('benchmark: perfect recall and zero false positives on the labeled suite', 
   } finally {
     console.log = orig;
   }
+  if (summary.fp || summary.fn) {
+    const bad = (summary.rows || []).filter((r) => /✗/.test(r.verdict || ''));
+    console.error('bench offenders:', JSON.stringify(bad, null, 2));
+  }
   assert.equal(summary.fp, 0, 'no false positives allowed (the FP-rate is make-or-break)');
   assert.equal(summary.fn, 0, 'no missed conflicts');
   assert.ok(summary.tp >= 3, 'should catch the planted conflicts');
