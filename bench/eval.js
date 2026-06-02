@@ -1,6 +1,6 @@
-// Evaluation harness. Runs sentinel against labeled scenarios and reports
+// Evaluation harness. Runs quietclash against labeled scenarios and reports
 // precision, recall, and the headline number — the credibility anchor for the
-// whole project. Every claim sentinel makes about catching hidden conflicts is
+// whole project. Every claim quietclash makes about catching hidden conflicts is
 // only as good as this number, so the harness is honest: it counts false
 // positives (firing on clean merges) as harshly as misses.
 
@@ -14,7 +14,7 @@ import { runCheck } from '../src/check.js';
 // Materialize one scenario as a git repo with base + agent-a + agent-b, all
 // merging cleanly. Returns { dir, base } or { dir, textualConflict:true }.
 function buildScenario(s) {
-  const dir = mkdtempSync(join(tmpdir(), 'sentinel-bench-'));
+  const dir = mkdtempSync(join(tmpdir(), 'quietclash-bench-'));
   const g = (...a) => execFileSync('git', a, { cwd: dir, stdio: 'ignore' });
   g('init', '-q');
   g('config', 'user.email', 'b@b.b');
@@ -113,7 +113,7 @@ export async function runBench({ json = false } = {}) {
     return summary;
   }
 
-  console.log('\nsentinel benchmark\n');
+  console.log('\nquietclash benchmark\n');
   for (const r of rows) {
     if (r.status) {
       console.log(`  ${r.status.padEnd(28)} ${r.name}`);

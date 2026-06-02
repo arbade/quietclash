@@ -1,27 +1,27 @@
 #!/usr/bin/env node
-// sentinel — detects silent behavioral merge conflicts between parallel AI agents.
+// quietclash — detects silent behavioral merge conflicts between parallel AI agents.
 //
 // The problem: two agents both edit code that merges cleanly (git sees no
 // conflict) and passes tests, yet are behaviorally incompatible at runtime.
-// sentinel finds the overlap surface, probes behavior, and explains the clash.
+// quietclash finds the overlap surface, probes behavior, and explains the clash.
 //
 // Commands:
-//   sentinel check --base <ref> --branches <a,b,...> [--json]
-//   sentinel explain <symbol> --base <ref> --branches <a,b>
-//   sentinel bench [--json]
+//   quietclash check --base <ref> --branches <a,b,...> [--json]
+//   quietclash explain <symbol> --base <ref> --branches <a,b>
+//   quietclash bench [--json]
 
 import { parseArgs } from 'node:util';
 
-const HELP = `sentinel — semantic conflict detection for parallel coding agents
+const HELP = `quietclash — semantic conflict detection for parallel coding agents
 
 USAGE
-  sentinel check --base <ref> --branches <a,b,...> [--cwd <dir>] [--json]
+  quietclash check --base <ref> --branches <a,b,...> [--cwd <dir>] [--json]
       Find silent behavioral conflicts between branches that merge cleanly.
 
-  sentinel explain <symbol> --base <ref> --branches <a,b> [--cwd <dir>]
+  quietclash explain <symbol> --base <ref> --branches <a,b> [--cwd <dir>]
       Deep-dive one conflicting symbol with a plain-language explanation.
 
-  sentinel bench [--json]
+  quietclash bench [--json]
       Run the evaluation suite; reports precision/recall and the headline
       "caught X% of test-passing merges with hidden behavioral conflicts".
 
@@ -33,12 +33,12 @@ OPTIONS
   -h, --help   Show this help.
 
 EXAMPLE
-  sentinel check --base main --branches agent-a,agent-b
+  quietclash check --base main --branches agent-a,agent-b
 
 Why this exists: production code generation is solved; the bottleneck moved to
 reviewing and trusting what agents produce. Git only sees TEXTUAL conflicts.
 ~5-10% of parallel-agent merges are textually clean but behaviorally broken
-(CodeCRDT, arXiv:2510.18893). sentinel catches that slice.`;
+(CodeCRDT, arXiv:2510.18893). quietclash catches that slice.`;
 
 async function main() {
   const argv = process.argv.slice(2);
@@ -62,7 +62,7 @@ async function main() {
   try {
     parsed = parseArgs({ args: argv.slice(1), options, allowPositionals: true });
   } catch (err) {
-    console.error(`sentinel: ${err.message}`);
+    console.error(`quietclash: ${err.message}`);
     process.exit(2);
   }
   const { values, positionals } = parsed;
@@ -77,7 +77,7 @@ async function main() {
       const { runCheck } = await import('../src/check.js');
       const branches = (values.branches ?? '').split(',').map((s) => s.trim()).filter(Boolean);
       if (!values.base || branches.length < 2) {
-        console.error('sentinel check: requires --base <ref> and --branches <a,b,...> (at least 2).');
+        console.error('quietclash check: requires --base <ref> and --branches <a,b,...> (at least 2).');
         process.exit(2);
       }
       await runCheck({ base: values.base, branches, cwd: values.cwd, json: values.json });
@@ -88,7 +88,7 @@ async function main() {
       const symbol = positionals[0];
       const branches = (values.branches ?? '').split(',').map((s) => s.trim()).filter(Boolean);
       if (!symbol || !values.base || branches.length < 2) {
-        console.error('sentinel explain: requires <symbol>, --base <ref>, and --branches <a,b>.');
+        console.error('quietclash explain: requires <symbol>, --base <ref>, and --branches <a,b>.');
         process.exit(2);
       }
       await runExplain({ symbol, base: values.base, branches, cwd: values.cwd });
@@ -100,12 +100,12 @@ async function main() {
       break;
     }
     default:
-      console.error(`sentinel: unknown command "${command}". Run "sentinel --help".`);
+      console.error(`quietclash: unknown command "${command}". Run "quietclash --help".`);
       process.exit(2);
   }
 }
 
 main().catch((err) => {
-  console.error(`sentinel: ${err.stack || err.message || err}`);
+  console.error(`quietclash: ${err.stack || err.message || err}`);
   process.exit(1);
 });

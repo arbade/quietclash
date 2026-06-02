@@ -1,5 +1,5 @@
 // Git plumbing: resolve refs, confirm branches merge cleanly (textually), and
-// materialize file contents at each ref. sentinel only cares about branches
+// materialize file contents at each ref. quietclash only cares about branches
 // that merge WITHOUT textual conflict — those are exactly where a silent
 // behavioral conflict can hide. If git already flags a conflict, the human
 // already knows; we add nothing.
@@ -65,7 +65,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 export async function checkoutTree(ref, cwd) {
-  const path = mkdtempSync(join(tmpdir(), 'sentinel-wt-'));
+  const path = mkdtempSync(join(tmpdir(), 'quietclash-wt-'));
   await git(['worktree', 'add', '--detach', '-q', path, ref], cwd);
   const cleanup = () => {
     // Synchronous + swallowed: cleanup must not leave async activity dangling
@@ -86,7 +86,7 @@ export async function checkoutTree(ref, cwd) {
 
 // Produce the MERGED tree of branchA+branchB as a temp worktree, given they
 // merge cleanly. Returns { path, cleanup } or { conflict: true } if textual
-// conflict (in which case sentinel has nothing to add — git already warns).
+// conflict (in which case quietclash has nothing to add — git already warns).
 export async function checkoutMerged(base, branchA, branchB, cwd) {
   const mb = await mergeBase(branchA, branchB, cwd);
   const treeOut = await git(
@@ -98,7 +98,7 @@ export async function checkoutMerged(base, branchA, branchB, cwd) {
   const treeOid = treeOut.trim().split('\n')[0];
   if (!/^[0-9a-f]{7,64}$/.test(treeOid)) return { conflict: true };
   // Commit the tree so we can add a worktree at it.
-  const commitOut = await git(['commit-tree', treeOid, '-m', 'sentinel-merged'], cwd, {
+  const commitOut = await git(['commit-tree', treeOid, '-m', 'quietclash-merged'], cwd, {
     allowFail: true,
   });
   if (commitOut.failed) return { conflict: true };

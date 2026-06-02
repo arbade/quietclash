@@ -1,10 +1,10 @@
 {
-  "name": "agent-sentinel",
+  "name": "quietclash",
   "version": "0.1.0",
-  "description": "Detects silent behavioral merge conflicts between parallel AI coding agents — the ones that merge cleanly and pass tests but break at runtime.",
+  "description": "Catches the quiet clash — silent behavioral merge conflicts between parallel AI coding agents that merge cleanly and pass tests but break at runtime.",
   "type": "module",
   "bin": {
-    "sentinel": "bin/sentinel.js"
+    "quietclash": "bin/quietclash.js"
   },
   "scripts": {
     "test": "node --test --test-concurrency=1",

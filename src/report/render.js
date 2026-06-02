@@ -43,7 +43,7 @@ export function renderTerminal(result) {
 
   if (!result.cleanMerge) {
     lines.push(paint('⚠ Branches do not merge cleanly (textual conflict).', c.yellow));
-    lines.push(paint('  sentinel adds nothing here — git already flags this. Resolve the textual conflict first.', c.dim));
+    lines.push(paint('  quietclash adds nothing here — git already flags this. Resolve the textual conflict first.', c.dim));
     return lines.join('\n');
   }
 

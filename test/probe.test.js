@@ -22,7 +22,7 @@ test('synthInputs respects arity and cap', () => {
 });
 
 test('probeSymbol observes a real behavioral DIFFERENCE between two versions', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'sentinel-probe-'));
+  const dir = mkdtempSync(join(tmpdir(), 'quietclash-probe-'));
   try {
     // version A: clamps negative to 0 (old behavior)
     writeFileSync(join(dir, 'a.mjs'), `export function norm(n){ return n < 0 ? 0 : n; }`);
@@ -43,7 +43,7 @@ test('probeSymbol observes a real behavioral DIFFERENCE between two versions', a
 });
 
 test('checkoutMerged produces a runnable merged worktree for clean merges', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'sentinel-merge-'));
+  const dir = mkdtempSync(join(tmpdir(), 'quietclash-merge-'));
   const g = (...a) => execFileSync('git', a, { cwd: dir });
   g('init', '-q'); g('config', 'user.email', 't@t.t'); g('config', 'user.name', 't'); g('config', 'commit.gpgsign', 'false');
   // base with two independent functions in two files (clean merge guaranteed)

@@ -2,7 +2,7 @@
 // calling the symbol with synthesized inputs, capturing a stable "behavior
 // signature" per input: the JSON-ish shape of the return value, or the error
 // kind. We run in a SEPARATE node process so a hang/crash/infinite-loop in
-// agent code can't take down sentinel, and so module side effects are isolated.
+// agent code can't take down quietclash, and so module side effects are isolated.
 
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -71,7 +71,7 @@ console.log(JSON.stringify({ ok: true, results }));
 // array of behavior signatures aligned to `inputs`, or { ok:false, reason }.
 export async function probeSymbol(worktreePath, relFile, symbol, inputs) {
   const absModule = resolve(worktreePath, relFile);
-  const harnessDir = mkdtempSync(join(tmpdir(), 'sentinel-h-'));
+  const harnessDir = mkdtempSync(join(tmpdir(), 'quietclash-h-'));
   const harnessPath = join(harnessDir, 'harness.mjs');
   writeFileSync(harnessPath, harnessSource(absModule, symbol, JSON.stringify(inputs)));
   try {

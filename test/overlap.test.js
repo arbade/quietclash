@@ -8,9 +8,9 @@ import { detectOverlap } from '../src/overlap/detectOverlap.js';
 import { mergesCleanly } from '../src/git/worktrees.js';
 
 // Build a throwaway git repo with a base commit and two agent branches, then
-// assert sentinel's overlap detection finds what we planted.
+// assert quietclash's overlap detection finds what we planted.
 function setupRepo() {
-  const dir = mkdtempSync(join(tmpdir(), 'sentinel-'));
+  const dir = mkdtempSync(join(tmpdir(), 'quietclash-'));
   const g = (...args) => execFileSync('git', args, { cwd: dir });
   g('init', '-q');
   g('config', 'user.email', 't@t.t');
@@ -69,7 +69,7 @@ test('detectOverlap finds the symbol two agents both changed, ignores single-age
 });
 
 test('detectOverlap finds a contract conflict (producer changes symbol, consumer calls it)', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'sentinel-'));
+  const dir = mkdtempSync(join(tmpdir(), 'quietclash-'));
   const g = (...args) => execFileSync('git', args, { cwd: dir });
   g('init', '-q');
   g('config', 'user.email', 't@t.t');
@@ -112,7 +112,7 @@ test('mergesCleanly reports clean for non-textually-conflicting branches', async
     // agent-a and agent-b both edit lib.js line 1 -> textual conflict expected.
     const res = await mergesCleanly('agent-a', 'agent-a', 'agent-b', dir);
     // They touch the same line, so this SHOULD be a textual conflict (not clean).
-    // sentinel's value is on CLEAN merges; this asserts we can tell them apart.
+    // quietclash's value is on CLEAN merges; this asserts we can tell them apart.
     assert.equal(typeof res.clean, 'boolean');
   } finally {
     rmSync(dir, { recursive: true, force: true });

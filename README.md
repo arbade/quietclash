@@ -1,10 +1,10 @@
-# sentinel
+# quietclash
 
 **Detects silent behavioral merge conflicts between parallel AI coding agents** — the ones git can't see.
 
 > Agent A rewrites `parseDate()` to assume UTC. Agent B, working in parallel, adds a caller that passes a local-time string. Both branches merge cleanly. Git reports no conflict. The tests pass. It breaks at runtime.
 >
-> No tool catches this today. `sentinel` does.
+> No tool catches this today. `quietclash` does.
 
 ## The problem
 
@@ -12,7 +12,7 @@ Production code generation is solved. The bottleneck has moved to **reviewing an
 
 When you run multiple agents in parallel (git worktrees, Claude Code agent teams, Conductor, vibe-kanban…), git only protects you from **textual** conflicts. It has no idea whether two changes that overlap in *meaning* are compatible. Recent work measured this: **5–10% of parallel-agent merges are textually clean and test-passing but behaviorally conflicting** (CodeCRDT, [arXiv:2510.18893](https://arxiv.org/abs/2510.18893)).
 
-The orchestration "runner" layer (spawn N agents in N worktrees) has 60+ tools. The **review-and-reconcile** layer does not. And *semantic* conflict detection between parallel agents is not shipped by anyone — even Composio lists it as an unbuilt "Reconciler" on their roadmap. That's the gap `sentinel` fills.
+The orchestration "runner" layer (spawn N agents in N worktrees) has 60+ tools. The **review-and-reconcile** layer does not. And *semantic* conflict detection between parallel agents is not shipped by anyone — even Composio lists it as an unbuilt "Reconciler" on their roadmap. That's the gap `quietclash` fills.
 
 ## How it works
 
@@ -29,20 +29,20 @@ Agent-agnostic. No backend. It's a CLI/CI check that reads git and emits a per-s
 ## Install
 
 ```bash
-npm install -g agent-sentinel    # or: npx agent-sentinel
+npm install -g agent-quietclash    # or: npx agent-quietclash
 ```
 
 ## Usage
 
 ```bash
 # Find silent behavioral conflicts between two agent branches
-sentinel check --base main --branches agent-a,agent-b
+quietclash check --base main --branches agent-a,agent-b
 
 # Deep-dive one symbol
-sentinel explain parseDate --base main --branches agent-a,agent-b
+quietclash explain parseDate --base main --branches agent-a,agent-b
 
 # Run the evaluation suite (precision/recall + headline number)
-sentinel bench
+quietclash bench
 ```
 
 ## Status

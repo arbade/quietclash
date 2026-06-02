@@ -1,10 +1,10 @@
-# HANDOFF — sentinel (devam notu)
+# HANDOFF — quietclash (devam notu)
 
 > Yeni bir session açtığında bu dosyayı oku. Projenin tam durumu, nasıl çalıştığı ve sıradaki adımlar burada.
 
 ## Bu proje ne?
 
-**`sentinel`** — paralel AI coding agent'ların (Claude Code, Cursor, Codex) ürettiği, **git'in göremediği sessiz davranışsal merge çatışmalarını** yakalayan açık-kaynak CLI.
+**`quietclash`** — paralel AI coding agent'ların (Claude Code, Cursor, Codex) ürettiği, **git'in göremediği sessiz davranışsal merge çatışmalarını** yakalayan açık-kaynak CLI.
 
 **Tek cümlelik problem:** İki agent `score` fonksiyonunu farklı satırlarda değiştirir (A: `×2`, B: `+10`). Git temiz merge eder, testler geçer, ama merged sonuç `(x*2)+10` — ne A'nın ne B'nin niyeti. Bunu yakalayan başka ürün yok (Composio bile roadmap'inde "Reconciler" diye bekletiyor).
 
@@ -27,7 +27,7 @@
 
 ### Mimari (veri akışı)
 ```
-bin/sentinel.js              CLI (check / explain / bench)
+bin/quietclash.js              CLI (check / explain / bench)
   └─ src/check.js            orchestrator — pipeline'ı yönetir
        git/worktrees.js      ref çöz, temiz-merge teyit, 4 worktree materialize et
        git/changedSymbols.js AST diff (typescript-estree) — dokunulan semboller
@@ -53,17 +53,17 @@ bin/sentinel.js              CLI (check / explain / bench)
 Öncelik sırası önerisi:
 1. **Contract-conflict'i davranışsal kanıtla** — şu an sadece "hint". En güçlü demo bu olur: merged worktree'de tüketici fonksiyonu çalıştırıp niyetinden saptığını göster. (`src/check.js` + `overlap` contract dalı.)
 2. **Demo GIF** — README başına, yıldız için kritik.
-3. **GitHub'a push** — git init + commit hazır (aşağıya bak), repo adı öneri: `agent-sentinel`.
-4. **`npm publish`** — `agent-sentinel` paket adıyla.
+3. **GitHub'a push** — git init + commit hazır (aşağıya bak), repo adı öneri: `agent-quietclash`.
+4. **`npm publish`** — `agent-quietclash` paket adıyla.
 5. v1: Python/Go dil desteği, GitHub Action, N-way (2'den fazla branch) çatışma.
 
 ## Çalıştırma komutları
 ```bash
-cd sentinel
+cd quietclash
 npm install
 npm test                                              # 24/24 geçmeli
 node bench/eval.js                                    # headline sayı
-node bin/sentinel.js check --base <ref> --branches a,b --cwd <repo>
+node bin/quietclash.js check --base <ref> --branches a,b --cwd <repo>
 ```
 
 ## Eski/atıl

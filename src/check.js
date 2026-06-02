@@ -1,7 +1,7 @@
 // Orchestrator: wires overlap detection -> behavioral probing (4 worlds) ->
 // behavioral diff -> false-positive filtering -> explanation -> report.
 //
-// This is what `sentinel check` runs. The flow per overlapping symbol:
+// This is what `quietclash check` runs. The flow per overlapping symbol:
 //   1. Probe it in base / branchA / branchB / merged worktrees on the same
 //      synthesized inputs.
 //   2. diffSymbol() decides if merged behavior betrays either agent's intent.

@@ -8,7 +8,7 @@
 //                 caller was written against the OLD contract.
 //
 // Everything downstream (probing, explanation) operates on this surface, so the
-// overlap step is what keeps sentinel focused — we never probe symbols only one
+// overlap step is what keeps quietclash focused — we never probe symbols only one
 // agent touched, because those carry no cross-agent conflict risk.
 
 import { changedFiles, fileAtRef } from '../git/worktrees.js';

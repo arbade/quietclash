@@ -2,10 +2,10 @@
 // the ground truth: does this merge hide a silent behavioral conflict?
 //
 // CONFLICT scenarios: merge cleanly (textually), pass any per-symbol test, but
-// the merged behavior matches NEITHER agent's intent. These are what sentinel
+// the merged behavior matches NEITHER agent's intent. These are what quietclash
 // must catch.
 //
-// CLEAN scenarios: merge cleanly AND the merged behavior is fine. sentinel must
+// CLEAN scenarios: merge cleanly AND the merged behavior is fine. quietclash must
 // STAY QUIET — firing here is a false positive, the thing that kills these tools.
 //
 // IMPORTANT for conflict scenarios: to keep the TEXTUAL merge clean while both
@@ -19,7 +19,7 @@
 const PAD = (label) => Array.from({ length: 6 }, (_, i) => `  let _${label}${i} = ${i};`).join('\n');
 
 export const scenarios = [
-  // ---- TRUE CONFLICTS (sentinel must fire) ----
+  // ---- TRUE CONFLICTS (quietclash must fire) ----
   {
     name: 'double-vs-add (same fn, far-apart lines, combined ≠ either)',
     expectConflict: true,
@@ -54,7 +54,7 @@ export const scenarios = [
       `export function f(x) {\n  let v = x;\n  v = v; // A-site\n${PAD('r')}\n  v = -v; // B-site\n  return v;\n}\n`,
   },
 
-  // ---- CLEAN (sentinel must stay quiet) ----
+  // ---- CLEAN (quietclash must stay quiet) ----
   {
     name: 'independent functions (no shared symbol)',
     expectConflict: false,

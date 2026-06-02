@@ -1,5 +1,5 @@
 // Plain-language explanation of WHY two changes clash. Optional: requires
-// @anthropic-ai/sdk and ANTHROPIC_API_KEY. Without them, sentinel falls back to
+// @anthropic-ai/sdk and ANTHROPIC_API_KEY. Without them, quietclash falls back to
 // a structural explanation derived from the source diff — still useful, just
 // not prose. Explanation is a nicety on top of detection; detection never
 // depends on it.
