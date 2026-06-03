@@ -151,27 +151,38 @@ quietclash check --base main --branches agent-a,agent-b
 
 Think of it as the **verification step** at the end of a parallel-agent run — the thing that answers "these merged without a git conflict, but can I actually trust the result?"
 
-### Use it as a Claude Code plugin (`/quietclash`)
+### Use it inside Claude Code (skill + `/quietclash`)
 
-Prefer to stay inside Claude Code? quietclash also ships as a plugin that adds a
-`/quietclash` slash command. It calls the same CLI engine under the hood, then
-reads the structured result back to you in plain language — including which base
-and branches it picked when you don't name them.
+Prefer to stay inside Claude Code? quietclash ships as a plugin with two ways in:
+
+- **A skill that triggers itself.** When you ask Claude something like *"are these
+  two agent branches safe to merge?"*, Claude reaches for the quietclash skill on
+  its own — no command to remember. It runs the engine and reports back in plain
+  language.
+- **A `/quietclash` slash command** for when you want to invoke it explicitly.
 
 ```text
-# In Claude Code, add this repo as a plugin marketplace, then install:
-/plugin marketplace add arbade/quietclash
-/plugin install quietclash@quietclash
+# Point Claude Code at the plugin directory (after npm install -g quietclash):
+claude --plugin-dir "$(npm root -g)/quietclash"
 
-# Then, after a parallel-agent run:
+# Or load it from a local clone:
+claude --plugin-dir /path/to/quietclash
+```
+
+```text
+# Then, after a parallel-agent run, either just ask:
+"agent-a and agent-b merge cleanly off main — do they behaviorally conflict?"
+#   → Claude auto-runs the quietclash skill.
+
+# …or invoke the command directly:
 /quietclash main agent-a agent-b
-# or just /quietclash — it will discover your recent branches and tell you
+# or just /quietclash — it discovers your recent branches and tells you
 # which two it compared.
 ```
 
-The CLI and the plugin are the **same tool**: the plugin is a thin wrapper that
-runs `quietclash check --json` and interprets the output. Nothing is
-reimplemented, so both stay in sync.
+The CLI, the skill, and the slash command are the **same tool**: both the skill
+and the command are thin wrappers that run `quietclash check --json` and
+interpret the output. Nothing is reimplemented, so they all stay in sync.
 
 ## Install
 

@@ -1,6 +1,6 @@
 {
   "name": "quietclash",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Catches the quiet clash — silent behavioral merge conflicts between parallel AI coding agents that merge cleanly and pass tests but break at runtime.",
   "type": "module",
   "bin": {
@@ -44,8 +44,10 @@
     "bench/",
     "examples/",
     "commands/",
+    "skills/",
     ".claude-plugin/",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "dependencies": {

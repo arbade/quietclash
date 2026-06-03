@@ -1,6 +1,6 @@
 {
   "name": "quietclash",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect silent behavioral merge conflicts between parallel coding agents — branches that merge cleanly and pass tests but are behaviorally incompatible.",
   "author": {
     "name": "arbade"
