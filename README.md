@@ -149,6 +149,28 @@ quietclash check --base main --branches agent-a,agent-b
 
 Think of it as the **verification step** at the end of a parallel-agent run — the thing that answers "these merged without a git conflict, but can I actually trust the result?"
 
+### Use it as a Claude Code plugin (`/quietclash`)
+
+Prefer to stay inside Claude Code? quietclash also ships as a plugin that adds a
+`/quietclash` slash command. It calls the same CLI engine under the hood, then
+reads the structured result back to you in plain language — including which base
+and branches it picked when you don't name them.
+
+```text
+# In Claude Code, add this repo as a plugin marketplace, then install:
+/plugin marketplace add arbade/quietclash
+/plugin install quietclash@quietclash
+
+# Then, after a parallel-agent run:
+/quietclash main agent-a agent-b
+# or just /quietclash — it will discover your recent branches and tell you
+# which two it compared.
+```
+
+The CLI and the plugin are the **same tool**: the plugin is a thin wrapper that
+runs `quietclash check --json` and interprets the output. Nothing is
+reimplemented, so both stay in sync.
+
 ## Install
 
 ```bash

@@ -37,6 +37,8 @@
     "src/",
     "bench/",
     "examples/",
+    "commands/",
+    ".claude-plugin/",
     "README.md",
     "LICENSE"
   ],

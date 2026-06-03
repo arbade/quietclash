@@ -1,0 +1,13 @@
+{
+  "name": "quietclash",
+  "owner": {
+    "name": "arbade"
+  },
+  "plugins": [
+    {
+      "name": "quietclash",
+      "source": ".",
+      "description": "Catch silent behavioral merge conflicts between parallel coding agents — branches that merge cleanly and pass tests but diverge at runtime."
+    }
+  ]
+}
