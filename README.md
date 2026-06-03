@@ -44,6 +44,12 @@ Most tools in this space read the diff or ask an LLM to *guess*. `quietclash` in
 
 ## See it
 
+<div align="center">
+
+![quietclash catching a silent behavioral merge conflict between two parallel agent branches](./examples/demo.gif)
+
+</div>
+
 ```console
 $ quietclash check --base main --branches agent-a,agent-b
 
