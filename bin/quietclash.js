@@ -25,6 +25,11 @@ USAGE
       Run the evaluation suite; reports precision/recall and the headline
       "caught X% of test-passing merges with hidden behavioral conflicts".
 
+  quietclash setup [--uninstall]
+      Install (or remove) the Claude Code skill so Claude auto-triggers
+      quietclash. Links the bundled skill into ~/.claude/skills/. Normally
+      runs automatically on npm install; run it by hand if that was skipped.
+
 OPTIONS
   --base       Git ref the agents branched from (e.g. main).
   --branches   Comma-separated agent branch refs to compare.
@@ -55,6 +60,7 @@ async function main() {
     branches: { type: 'string' },
     cwd: { type: 'string', default: process.cwd() },
     json: { type: 'boolean', default: false },
+    uninstall: { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h', default: false },
   };
 
@@ -97,6 +103,38 @@ async function main() {
     case 'bench': {
       const { runBench } = await import('../bench/eval.js');
       await runBench({ json: values.json });
+      break;
+    }
+    case 'setup': {
+      const { installSkill, uninstallSkill } = await import('../scripts/install-skill.js');
+      const uninstall = positionals.includes('uninstall') || values.uninstall;
+      const res = uninstall ? uninstallSkill() : installSkill();
+      switch (res.status) {
+        case 'linked':
+          console.log(`✓ Claude Code skill linked → ${res.target}`);
+          console.log('  In Claude Code, ask it to check two agent branches — the quietclash skill triggers automatically.');
+          break;
+        case 'copied':
+          console.log(`✓ Claude Code skill copied → ${res.target}`);
+          console.log(`  (${res.note})`);
+          break;
+        case 'already':
+          console.log(`✓ Already installed → ${res.target} (${res.via})`);
+          break;
+        case 'removed':
+          console.log(`✓ Removed → ${res.target}`);
+          break;
+        case 'not-installed':
+          console.log(`Nothing to remove — no skill at ${res.target}.`);
+          break;
+        case 'skipped':
+          console.log(`• Skipped: ${res.reason}`);
+          if (!uninstall) console.log('  Load it per-session instead: claude --plugin-dir "$(npm root -g)/quietclash"');
+          break;
+        default:
+          console.error(`✗ ${res.reason || 'unknown error'}`);
+          process.exitCode = 1;
+      }
       break;
     }
     default:

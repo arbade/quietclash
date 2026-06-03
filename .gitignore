@@ -1,6 +1,7 @@
 node_modules/
 results/
 *.log
+*.tgz
 .DS_Store
 
 # personal dev notes — not for the public repo

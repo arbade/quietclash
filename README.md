@@ -161,16 +161,14 @@ Prefer to stay inside Claude Code? quietclash ships as a plugin with two ways in
   language.
 - **A `/quietclash` slash command** for when you want to invoke it explicitly.
 
-```text
-# Point Claude Code at the plugin directory (after npm install -g quietclash):
-claude --plugin-dir "$(npm root -g)/quietclash"
-
-# Or load it from a local clone:
-claude --plugin-dir /path/to/quietclash
-```
+**Installing the package installs the skill.** `npm install -g quietclash`
+links the skill into `~/.claude/skills/` for you, so Claude Code discovers it
+automatically — no extra step. (If your install skipped post-install scripts —
+CI, `--ignore-scripts`, or a locked-down environment — run `quietclash setup`
+once to link it, or `quietclash setup --uninstall` to remove it.)
 
 ```text
-# Then, after a parallel-agent run, either just ask:
+# After a parallel-agent run, just ask Claude:
 "agent-a and agent-b merge cleanly off main — do they behaviorally conflict?"
 #   → Claude auto-runs the quietclash skill.
 
@@ -178,6 +176,13 @@ claude --plugin-dir /path/to/quietclash
 /quietclash main agent-a agent-b
 # or just /quietclash — it discovers your recent branches and tells you
 # which two it compared.
+```
+
+Prefer not to touch `~/.claude/`? You can load the plugin per session instead:
+
+```text
+claude --plugin-dir "$(npm root -g)/quietclash"   # installed copy
+claude --plugin-dir /path/to/quietclash           # local clone
 ```
 
 The CLI, the skill, and the slash command are the **same tool**: both the skill

@@ -1,6 +1,6 @@
 {
   "name": "quietclash",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Catches the quiet clash — silent behavioral merge conflicts between parallel AI coding agents that merge cleanly and pass tests but break at runtime.",
   "type": "module",
   "bin": {
@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "node --test --test-concurrency=1",
-    "bench": "node bench/eval.js"
+    "bench": "node bench/eval.js",
+    "postinstall": "node scripts/install-skill.js --postinstall"
   },
   "engines": {
     "node": ">=18"
@@ -41,6 +42,7 @@
   "files": [
     "bin/",
     "src/",
+    "scripts/",
     "bench/",
     "examples/",
     "commands/",
