@@ -10,9 +10,14 @@
   "license": "MIT",
   "keywords": [
     "parallel-agents",
+    "ai-agents",
+    "agentic",
     "merge-conflict",
+    "semantic-conflict",
+    "behavioral-conflict",
+    "behavioral-testing",
     "code-review",
     "worktree",
-    "behavioral-testing"
+    "claude-code"
   ]
 }

@@ -8,11 +8,11 @@ When parallel AI agents edit your codebase, some of their changes **merge cleanl
 
 [![npm](https://img.shields.io/npm/v/quietclash?color=cb3837&logo=npm)](https://www.npmjs.com/package/quietclash)
 [![CI](https://img.shields.io/github/actions/workflow/status/arbade/quietclash/ci.yml?branch=main&logo=github&label=tests)](https://github.com/arbade/quietclash/actions)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/arbade/quietclash/blob/main/LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![agent-agnostic](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Cursor%20%C2%B7%20Codex-7c3aed)](#scope--honest-limits)
 
-![quietclash catching a silent behavioral merge conflict between two parallel agent branches](./examples/demo.gif)
+![quietclash catching a silent behavioral merge conflict between two parallel agent branches](https://raw.githubusercontent.com/arbade/quietclash/main/examples/demo.gif)
 
 </div>
 
@@ -67,7 +67,7 @@ But quietclash runs the code and sees what git can't:
           still assumes dollars. They merge cleanly and break on every price.
 ```
 
-> Reproduce it yourself: [`bash examples/demo.sh`](./examples/demo.sh)
+> Reproduce it yourself: [`bash examples/demo.sh`](https://github.com/arbade/quietclash/blob/main/examples/demo.sh)
 
 ---
 
@@ -314,4 +314,4 @@ Issues and PRs welcome. Run the suite with `npm test` (26 tests) and the benchma
 
 ## License
 
-[MIT](./LICENSE) © arbade
+[MIT](https://github.com/arbade/quietclash/blob/main/LICENSE) © arbade

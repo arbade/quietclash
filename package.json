@@ -14,13 +14,19 @@
     "node": ">=18"
   },
   "keywords": [
+    "parallel-agents",
     "ai-agents",
-    "claude-code",
+    "agentic",
     "merge-conflict",
     "semantic-conflict",
+    "behavioral-conflict",
+    "behavioral-testing",
+    "regression",
     "code-review",
-    "parallel-agents",
-    "git-worktree"
+    "git-worktree",
+    "claude-code",
+    "cursor",
+    "codex"
   ],
   "license": "MIT",
   "author": "arbade",
