@@ -12,6 +12,8 @@ When parallel AI agents edit your codebase, some of their changes **merge cleanl
 [![node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![agent-agnostic](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Cursor%20%C2%B7%20Codex-7c3aed)](#scope--honest-limits)
 
+![quietclash catching a silent behavioral merge conflict between two parallel agent branches](./examples/demo.gif)
+
 </div>
 
 ---
@@ -43,12 +45,6 @@ Most tools in this space read the diff or ask an LLM to *guess*. `quietclash` in
 ---
 
 ## See it
-
-<div align="center">
-
-![quietclash catching a silent behavioral merge conflict between two parallel agent branches](./examples/demo.gif)
-
-</div>
 
 ```console
 $ quietclash check --base main --branches agent-a,agent-b
