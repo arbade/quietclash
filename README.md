@@ -12,7 +12,11 @@ When parallel AI agents edit your codebase, some of their changes **merge cleanl
 [![node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![agent-agnostic](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Cursor%20%C2%B7%20Codex-7c3aed)](#scope--honest-limits)
 
-![quietclash catching a silent behavioral merge conflict between two parallel agent branches](https://raw.githubusercontent.com/arbade/quietclash/main/examples/demo.gif)
+![the /quietclash slash command in Claude Code catching a silent behavioral merge conflict between two parallel agent branches](https://raw.githubusercontent.com/arbade/quietclash/main/examples/slash-demo.gif)
+
+<sub>As a Claude Code slash command — or run the same engine as a plain CLI:</sub>
+
+![quietclash CLI catching a silent behavioral merge conflict between two parallel agent branches](https://raw.githubusercontent.com/arbade/quietclash/main/examples/demo.gif)
 
 </div>
 

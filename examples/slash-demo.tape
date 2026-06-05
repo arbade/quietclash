@@ -1,31 +1,38 @@
 # quietclash /quietclash slash-command demo — VHS tape.
-# Renders examples/slash-demo.gif: a Claude Code session where the user invokes
-# the /quietclash slash command on three refs and Claude reports the hidden
+# Renders examples/slash-demo.gif: the user launches Claude Code, runs the
+# /quietclash slash command on three refs, and Claude reports the hidden
 # corridorsPerScreen broken-contract conflict.
 #
 #   vhs examples/slash-demo.tape
 #
-# The scenario + styled output live in examples/slash-demo.sh so the GIF runs
-# the real engine.
+# The splash, prompt-box typing, autocomplete, and verdict are produced by
+# examples/slash-demo.sh, which builds a real repo and runs the real engine.
 
 Output examples/slash-demo.gif
 
 Set Shell "bash"
 Set FontSize 17
 Set Width 1180
-Set Height 940
+Set Height 1000
 Set Padding 26
 Set Theme "Catppuccin Mocha"
-Set TypingSpeed 40ms
+Set TypingSpeed 55ms
 Set PlaybackSpeed 1.0
 
-# Render the session (real repo build + real engine run happen inside).
-Type "bash examples/slash-demo.sh"
-Sleep 500ms
-Enter
+# The user types the launch command for Claude Code (visible) — but we do NOT
+# press Enter on it, so the real `claude` binary never starts. We clear the line
+# and run the staged session instead, which renders its own faithful splash.
+Type "claude"
+Sleep 600ms
+Ctrl+U
 
-# Let the build + engine run and the verdict paint in.
-Sleep 9s
+Hide
+Type "clear && bash examples/slash-demo.sh"
+Enter
+Show
+
+# Splash + prompt-box typing + autocomplete + engine run + verdict paint in.
+Sleep 13s
 
 # Hold on the final verdict so it's readable.
 Sleep 5s
