@@ -100,10 +100,10 @@ The four worlds are the heart of it. For every symbol that two agents touched, `
 flowchart TD
     subgraph worlds["Run the same inputs through 4 versions"]
         direction LR
-        BASE["🏁 base<br/><i>original behavior</i>"]
-        AA["🅰️ agent-a alone<br/><i>A's intent</i>"]
-        BB["🅱️ agent-b alone<br/><i>B's intent</i>"]
-        MM["🔀 merged<br/><i>what ships</i>"]
+        BASE["base<br/>(original behavior)"]
+        AA["agent-a alone<br/>(A's intent)"]
+        BB["agent-b alone<br/>(B's intent)"]
+        MM["merged<br/>(what ships)"]
     end
     worlds --> Q{"does merged match<br/>what any agent intended?"}
     Q -- "matches an intent" --> OK["✓ compatible — stay quiet"]
